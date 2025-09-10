@@ -1,0 +1,31 @@
+services:
+  broker:
+    build:
+      context: .
+      dockerfile: Dockerfile_broker
+    container_name: broker
+    ports:
+      - 5555:5555
+      - 5556:5556
+
+  servidor:
+    build:
+      context: .
+      dockerfile: Dockerfile_servidor
+    container_name: servidor
+    volumes:
+      - ./servidor.py:/app/servidor.py
+    depends_on:
+      - broker
+
+  cliente:
+    build:
+      context: .
+      dockerfile: Dockerfile_cliente
+    container_name: cliente
+    stdin_open: true
+    tty: true
+    depends_on:
+      - servidor
+    volumes:
+      - ./cliente.py:/app/cliente.py
