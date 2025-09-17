@@ -1,61 +1,96 @@
 import zmq
+import json
+from datetime import datetime
+import os
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.connect("tcp://broker:5556")
 
-users = dict()
-cont = 0
+# Função para carregar dados do disco
+def load_data(filename):
+    if os.path.exists(filename):
+        with open(filename, 'r') as f:
+            return json.load(f)
+    return {}
+
+# Função para salvar dados no disco
+def save_data(data, filename):
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
+
+# Carrega os dados de usuários e canais
+users = load_data("users.json")
+channels = load_data("channels.json")
+
+print("Servidor iniciado, aguardando requisições...")
 
 while True:
     request = socket.recv_json()
-    opcao = request["opcao"]
-    dados = request["dados"]
-    reply = "ERRO: função não escolhida"
+    service = request.get("service")
+    data = request.get("data", {})
+    reply = {}
 
-    match opcao:
+    print(f"Requisição recebida: {request}")
+
+    match service:
         case "login":
-            users[cont] = dados
-            cont += 1
-            reply = {
-                "opcao": "login",
-                "data":{
-                  "status": "sucesso"/"erro",
-                  "timestamp": datetime.now().isoformat(),
-                  "description": "deu erro sei la"
-                }
+            user_name = data.get("user")
+            timestamp = data.get("timestamp")
+            
+            reply["service"] = "login"
+            reply["data"] = {
+                "timestamp": datetime.now().isoformat()
             }
 
-        case "atualizar":
-            id_tarefa = dados["id"]
-            if id_tarefa in tarefas:
-                tarefas[id_tarefa] = {
-                    "titulo": dados["titulo"],
-                    "desc": dados["desc"]
-                }
-                reply = "OK"
+            if user_name not in users:
+                users[user_name] = {"timestamp": timestamp}
+                save_data(users, "users.json")
+                reply["data"]["status"] = "sucesso"
             else:
-                reply = "ERRO: tarefa não encontrada"
+                reply["data"]["status"] = "erro"
+                reply["data"]["description"] = "Usuário já existe"
+        
+        case "users":
+            reply["service"] = "users"
+            reply["data"] = {
+                "timestamp": datetime.now().isoformat(),
+                "users": list(users.keys())
+            }
 
-        case "deletar":
-            id_tarefa = dados["id"]
-            if id_tarefa in tarefas:
-                del tarefas[id_tarefa]
-                reply = "OK"
-            else:
-                reply = "ERRO: tarefa não encontrada"
+        case "channel":
+            channel_name = data.get("channel")
+            timestamp = data.get("timestamp")
             
-        case "listar":
-            reply = str(tarefas)
+            reply["service"] = "channel"
+            reply["data"] = {
+                "timestamp": datetime.now().isoformat()
+            }
 
-        case "buscar":
-            id_tarefa = dados["id"]
-            if id_tarefa in tarefas:
-                reply = str(tarefas[id_tarefa])
+            if channel_name not in channels:
+                channels[channel_name] = {"timestamp": timestamp}
+                save_data(channels, "channels.json")
+                reply["data"]["status"] = "sucesso"
             else:
-                reply = "ERRO: tarefa não encontrada"
+                reply["data"]["status"] = "erro"
+                reply["data"]["description"] = "Canal já existe"
 
-        case _ :
-            reply = "ERRO: função não encontrada"
+        case "channels":
+            reply["service"] = "channels"
+            reply["data"] = {
+                "timestamp": datetime.now().isoformat(),
+                "channels": list(channels.keys())
+            }
 
-    socket.send_string(reply)
+        case _:
+            reply["service"] = "erro"
+            reply["data"] = {
+                "status": "erro",
+                "timestamp": datetime.now().isoformat(),
+                "description": "Serviço não encontrado"
+            }
+
+    socket.send_json(reply)
+
+socket.close()
+context.term()
