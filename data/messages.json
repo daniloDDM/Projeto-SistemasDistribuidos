@@ -1,0 +1,754 @@
+{
+    "channel:canal_wysy": [
+        {
+            "user": "bot_tcxzu",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:39:32.420819"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:39:32.643290"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:39:33.010879"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:39:34.260069"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:39:34.261979"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:39:34.848223"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:39:35.258020"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:39:36.387789"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:39:36.625816"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:39:37.330952"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:39:37.937044"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:39:37.959990"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:39:39.660280"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:39:39.792135"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:39:40.180797"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:39:41.629879"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:39:42.123025"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:39:42.326644"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:39:43.246352"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:39:44.004048"
+        },
+        {
+            "user": "bot_tcxzu",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:39:44.778181"
+        },
+        {
+            "user": "bot_gxrgb",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:39:44.917831"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:40:44.329655"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:40:44.495956"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:40:44.895637"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:40:45.885812"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:40:46.172358"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:40:46.711532"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:40:48.093802"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:40:48.417804"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:40:49.665463"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:40:49.676817"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:40:50.871933"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:40:51.540026"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:40:51.888109"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:40:52.602886"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:40:52.628289"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:40:53.831960"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:40:54.219985"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:40:55.609608"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:40:55.821576"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:40:56.525047"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:40:57.427166"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:40:58.127822"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:40:58.406842"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:40:59.762805"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:40:59.818067"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:00.360725"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:01.302826"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:01.530798"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:03.190760"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:03.281051"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:04.569148"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:41:04.995628"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:05.160041"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:05.722344"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:06.170732"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:06.710198"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:07.201120"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:07.965860"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:08.689819"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:09.830069"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:10.513667"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:41:11.439815"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:11.520816"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:12.465338"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:12.780875"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:13.755252"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:13.980864"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:14.858654"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:15.365045"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:15.677187"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:16.217674"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:16.514580"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:17.159079"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:17.843841"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:18.611940"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:19.247728"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:41:19.289789"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:20.499465"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:21.014478"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:21.868171"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:22.741432"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:23.004386"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:24.418289"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:24.619787"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:25.294572"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:25.382943"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:26.222134"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:26.350124"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:27.625895"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:28.226679"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:28.519283"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:28.780953"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:29.772353"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:41:29.772691"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:30.844286"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Preciso de f\u00e9rias.",
+            "timestamp": "2025-09-17T23:41:31.013843"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:32.275935"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:32.599674"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:41:33.370371"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:34.509266"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:34.931286"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:35.458926"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:35.933810"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:36.180452"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:37.281362"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:37.714304"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:38.909814"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:38.915789"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:39.517509"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:40.252278"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:40.456826"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:41.330990"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:41.513490"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:42.307534"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:42.843254"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:43.298227"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:43.866094"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:44.499843"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "ZeroMQ \u00e9 muito interessante.",
+            "timestamp": "2025-09-17T23:41:44.513339"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:45.666842"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:45.996453"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:41:46.188120"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:47.530630"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:47.544936"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:48.242459"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:49.076643"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:49.474246"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:41:50.238855"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:51.108530"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:51.460690"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:52.198402"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:52.827643"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:53.628940"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:53.936966"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:54.533790"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Que dia para programar!",
+            "timestamp": "2025-09-17T23:41:55.222796"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:41:55.353116"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:41:56.717508"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:56.823418"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Ol\u00e1 a todos!",
+            "timestamp": "2025-09-17T23:41:58.073534"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:58.494002"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Python \u00e9 uma \u00f3tima linguagem.",
+            "timestamp": "2025-09-17T23:41:59.075822"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:41:59.826607"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Quem quer caf\u00e9?",
+            "timestamp": "2025-09-17T23:42:00.298811"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Testando, 1, 2, 3...",
+            "timestamp": "2025-09-17T23:42:00.832827"
+        },
+        {
+            "user": "bot_tzzhz",
+            "message": "Este \u00e9 um teste do sistema de mensagens.",
+            "timestamp": "2025-09-17T23:42:01.762807"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Docker facilita muito a vida.",
+            "timestamp": "2025-09-17T23:42:01.999886"
+        },
+        {
+            "user": "bot_xgdsg",
+            "message": "Algu\u00e9m a\u00ed?",
+            "timestamp": "2025-09-17T23:42:02.525951"
+        }
+    ]
+}

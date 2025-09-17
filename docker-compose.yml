@@ -5,8 +5,17 @@ services:
       dockerfile: Dockerfile_broker
     container_name: broker
     ports:
-      - 5555:5555
-      - 5556:5556
+      - "5555:5555"
+      - "5556:5556"
+
+  pubsub_proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile_proxy
+    container_name: proxy
+    ports:
+      - "5557:5557"
+      - "5558:5558"
 
   servidor:
     build:
@@ -15,8 +24,10 @@ services:
     container_name: servidor
     volumes:
       - ./servidor.py:/app/servidor.py
+      - ./data:/app/data # Volume para persistir os dados
     depends_on:
       - broker
+      - pubsub_proxy # Servidor agora também depende do proxy pub/sub
 
   cliente:
     build:
@@ -26,6 +37,13 @@ services:
     stdin_open: true
     tty: true
     depends_on:
+      - servidor # Depende do servidor para estar de pé
+
+  cliente_automatico:
+    build:
+      context: .
+      dockerfile: Dockerfile_cliente_automatico # Criaremos este Dockerfile a seguir
+    deploy:
+      replicas: 2
+    depends_on:
       - servidor
-    volumes:
-      - ./cliente.py:/app/cliente.py

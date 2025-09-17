@@ -1,0 +1,10 @@
+# Dockerfile_cliente_automatico
+FROM python:3.9-alpine
+
+WORKDIR /app
+
+RUN pip install pyzmq
+
+COPY ./cliente_automatico.py .
+
+CMD ["python", "cliente_automatico.py"]
