@@ -1,34 +1,28 @@
-# servidor.py
 import zmq
 import json
 from datetime import datetime
 import os
+import msgpack
 
-# --- Configuração dos Sockets ---
+# --- Inicialização do ZeroMQ ---
 context = zmq.Context()
 
-# Socket para Request-Reply
+# --- Socket 1: REQ/REP (Para comandos) ---
 rep_socket = context.socket(zmq.REP)
 rep_socket.connect("tcp://broker:5556")
 
-# Socket para Publisher-Subscriber
+# --- Socket 2: PUB (Para publicar mensagens) ---
 pub_socket = context.socket(zmq.PUB)
-pub_socket.connect("tcp://pubsub_proxy:5557") # Conecta ao XSUB do novo proxy
+pub_socket.connect("tcp://proxy:5556") 
 
-# --- Persistência de Dados ---
-DATA_DIR = "data"
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR)
 
-USERS_FILE = os.path.join(DATA_DIR, "users.json")
-CHANNELS_FILE = os.path.join(DATA_DIR, "channels.json")
-MESSAGES_FILE = os.path.join(DATA_DIR, "messages.json")
-
+# --- Funções de Persistência ---
 def load_data(filename):
     if os.path.exists(filename):
         with open(filename, 'r') as f:
             try:
-                return json.load(f)
+                content = f.read()
+                return json.loads(content) if content else {}
             except json.JSONDecodeError:
                 return {}
     return {}
@@ -38,123 +32,123 @@ def save_data(data, filename):
         json.dump(data, f, indent=4)
 
 # Carrega os dados
-users = load_data(USERS_FILE)
-channels = load_data(CHANNELS_FILE)
-messages = load_data(MESSAGES_FILE)
+users = load_data("users.json")
+channels = load_data("channels.json")
 
-print("Servidor iniciado, aguardando requisições...")
+print("Servidor REQ/REP e PUB iniciado...")
 
+# --- Loop Principal (Processando comandos) ---
 while True:
-    request = rep_socket.recv_json()
+    try:
+        # 1. RECEBE COMANDOS do socket REQ/REP
+        frames = rep_socket.recv_multipart()
+        request_packed = frames[-1]
+        request = msgpack.unpackb(request_packed, raw=False)
+        
+    except Exception as e:
+        print(f"ERRO GERAL no recebimento REQ/REP: {e}")
+        error_reply = msgpack.packb({"service": "erro", "data": {"status": "erro", "description": "Erro interno no servidor."}}, default=str)
+        rep_socket.send(error_reply)
+        continue
+
     service = request.get("service")
     data = request.get("data", {})
-    reply = {}
+    reply = {} # Resposta para o cliente REQ
 
-    print(f"Requisição recebida: {request}")
+    print(f"Requisição REQ/REP recebida: {request}")
 
     match service:
+        # ... (Casos "login", "users", "channel", "channels" permanecem os mesmos) ...
         case "login":
             user_name = data.get("user")
             timestamp = data.get("timestamp")
-            
-            reply["service"] = "login"
-            reply["data"] = {"timestamp": datetime.now().isoformat()}
-
+            reply = {"service": "login", "data": {"timestamp": datetime.now().isoformat()}}
             if user_name not in users:
                 users[user_name] = {"timestamp": timestamp}
-                save_data(users, USERS_FILE)
+                save_data(users, "users.json")
                 reply["data"]["status"] = "sucesso"
             else:
                 reply["data"]["status"] = "erro"
                 reply["data"]["description"] = "Usuário já existe"
         
         case "users":
-            reply["service"] = "users"
-            reply["data"] = {
-                "timestamp": datetime.now().isoformat(),
-                "users": list(users.keys())
-            }
+            reply = {"service": "users", "data": {"timestamp": datetime.now().isoformat(), "users": list(users.keys())}}
 
         case "channel":
             channel_name = data.get("channel")
             timestamp = data.get("timestamp")
-            
-            reply["service"] = "channel"
-            reply["data"] = {"timestamp": datetime.now().isoformat()}
-
+            reply = {"service": "channel", "data": {"timestamp": datetime.now().isoformat()}}
             if channel_name not in channels:
                 channels[channel_name] = {"timestamp": timestamp}
-                save_data(channels, CHANNELS_FILE)
+                save_data(channels, "channels.json")
                 reply["data"]["status"] = "sucesso"
             else:
                 reply["data"]["status"] = "erro"
                 reply["data"]["description"] = "Canal já existe"
 
         case "channels":
-            reply["service"] = "channels"
-            reply["data"] = {
-                "timestamp": datetime.now().isoformat(),
-                "channels": list(channels.keys())
-            }
+            reply = {"service": "channels", "data": {"timestamp": datetime.now().isoformat(), "channels": list(channels.keys())}}
+        
 
-        case "publish": # NOVO SERVIÇO
-            user = data.get("user")
-            channel = data.get("channel")
+        # --- LÓGICA DE PUBLICAÇÃO REAL ---
+        case "publish":
+            channel_name = data.get("channel")
+            user_name = data.get("user")
             message = data.get("message")
-            timestamp = data.get("timestamp")
             
             reply["service"] = "publish"
-            reply["data"] = {"timestamp": datetime.now().isoformat()}
-
-            if channel in channels:
-                # Publica a mensagem no tópico do canal
-                topic = f"channel:{channel}"
-                full_message = f"[{channel}] {user}: {message}"
-                pub_socket.send_string(f"{topic} {full_message}")
-                
-                # Persiste a mensagem
-                if topic not in messages:
-                    messages[topic] = []
-                messages[topic].append({"user": user, "message": message, "timestamp": timestamp})
-                save_data(messages, MESSAGES_FILE)
-                
-                reply["data"]["status"] = "OK"
+            
+            if channel_name not in channels:
+                reply["data"] = {"status": "erro", "message": "Canal não existe."}
             else:
-                reply["data"]["status"] = "erro"
-                reply["data"]["message"] = "Canal não existe"
-        
-        case "message": # NOVO SERVIÇO
+                # 1. Prepara a mensagem a ser publicada
+                message_payload = {
+                    "user": user_name,
+                    "message": message,
+                    "timestamp": data.get("timestamp")
+                }
+                
+                # 2. PUBLICA A MENSAGEM (Tópico + Payload MessagePack)
+                pub_socket.send_multipart([
+                    channel_name.encode('utf-8'),               # Frame 1: Tópico (Bytes)
+                    msgpack.packb(message_payload, default=str) # Frame 2: Payload (Bytes)
+                ])
+                
+                # 3. Prepara a resposta REQ/REP de sucesso
+                reply["data"] = {"status": "OK", "message": "Mensagem publicada."}
+
+        case "message":
+            dest_user = data.get("dst")
             src_user = data.get("src")
-            dst_user = data.get("dst")
             message = data.get("message")
-            timestamp = data.get("timestamp")
             
             reply["service"] = "message"
-            reply["data"] = {"timestamp": datetime.now().isoformat()}
-
-            if dst_user in users:
-                # Publica a mensagem no tópico do usuário de destino
-                topic = f"user:{dst_user}"
-                full_message = f"(privado) {src_user}: {message}"
-                pub_socket.send_string(f"{topic} {full_message}")
-                
-                # Persiste a mensagem
-                if topic not in messages:
-                    messages[topic] = []
-                messages[topic].append({"src": src_user, "message": message, "timestamp": timestamp})
-                save_data(messages, MESSAGES_FILE)
-                
-                reply["data"]["status"] = "OK"
+            
+            if dest_user not in users:
+                reply["data"] = {"status": "erro", "message": "Usuário de destino não existe."}
             else:
-                reply["data"]["status"] = "erro"
-                reply["data"]["message"] = "Usuário de destino não existe"
+                # 1. Prepara a mensagem privada
+                message_payload = {
+                    "src": src_user,
+                    "message": message,
+                    "timestamp": data.get("timestamp")
+                }
+                
+                # 2. Define o tópico privado
+                topic = f"user:{dest_user}"
+                
+                # 3. PUBLICA A MENSAGEM (Tópico + Payload MessagePack)
+                pub_socket.send_multipart([
+                    topic.encode('utf-8'),                      # Frame 1: Tópico (Bytes)
+                    msgpack.packb(message_payload, default=str) # Frame 2: Payload (Bytes)
+                ])
+                
+                # 4. Prepara a resposta REQ/REP de sucesso
+                reply["data"] = {"status": "OK", "message": "Mensagem privada enviada."}
 
         case _:
-            reply["service"] = "erro"
-            reply["data"] = {
-                "status": "erro",
-                "timestamp": datetime.now().isoformat(),
-                "description": "Serviço não encontrado"
-            }
+            reply = {"service": "erro", "data": {"status": "erro", "timestamp": datetime.now().isoformat(), "description": "Serviço não encontrado"}}
 
-    rep_socket.send_json(reply)
+    # --- ENVIA A RESPOSTA REQ/REP ---
+    reply_packed = msgpack.packb(reply, default=str) 
+    rep_socket.send(reply_packed)

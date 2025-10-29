@@ -1,7 +1,7 @@
 # cliente.py
 import zmq
 from datetime import datetime
-import json
+import msgpack # Importado para serialização/desserialização
 import threading
 
 # --- Variáveis Globais ---
@@ -12,22 +12,52 @@ running = True # Flag para controlar a execução das threads
 # --- Thread para Receber Mensagens (SUB) ---
 def receive_messages():
     sub_socket = context.socket(zmq.SUB)
+    # ATENÇÃO: Verifique se este endereço 'pubsub_proxy:5558' está correto na sua configuração
     sub_socket.connect("tcp://pubsub_proxy:5558")
     
-    # Sempre se inscreve nas mensagens para o usuário logado
+    # ... Inscrição do tópico (deve ser em bytes ou string, dependendo do PUB) ...
+    # Vamos manter a inscrição como string, já que o tópico é uma string:
     if user_name:
+        # A inscrição deve ser feita como bytes se o broker for um proxy simples
         sub_socket.setsockopt_string(zmq.SUBSCRIBE, f"user:{user_name}")
 
     print("Listener de mensagens iniciado.")
     
     while running:
         try:
-            # Espera por uma mensagem, mas com um timeout para não bloquear para sempre
             if sub_socket.poll(timeout=1000): 
-                message = sub_socket.recv_string()
-                print(f"\n[MENSAGEM RECEBIDA] {message.split(' ', 1)[1]}\nEntre com a opção: ", end="")
+                # 1. Recebe a mensagem como frames de bytes (multipart)
+                frames = sub_socket.recv_multipart()
+                
+                # O primeiro frame é o TÓPICO, o segundo é o PAYLOAD (MessagePack)
+                topic = frames[0].decode('utf-8')
+                payload_packed = frames[1]
+
+                # 2. DESSERIALIZA o payload com MessagePack
+                # O MessagePack agora deve conter a mensagem de chat
+                message_data = msgpack.unpackb(payload_packed, raw=False)
+                
+                # Monta uma string de exibição
+                if topic.startswith("user:"):
+                    # Mensagem privada: {src} -> {dst}: {message}
+                    src = message_data.get("src", "Desconhecido")
+                    msg = message_data.get("message", "N/A")
+                    output = f"[{src} para VOCÊ] {msg}"
+                else:
+                    # Mensagem de canal: [canal] user: mensagem
+                    channel = topic
+                    user = message_data.get("user", "Desconhecido")
+                    msg = message_data.get("message", "N/A")
+                    output = f"[{channel}] {user}: {msg}"
+
+                print(f"\n[MENSAGEM RECEBIDA] {output}\nEntre com a opção: ", end="", flush=True)
+
         except zmq.ContextTerminated:
             break
+        except Exception as e:
+            # Captura exceções, incluindo possíveis erros de decodificação se o broker enviar algo inesperado
+            print(f"\n[ERRO NO LISTENER] {e}\nEntre com a opção: ", end="", flush=True)
+            pass
     
     sub_socket.close()
     print("Listener de mensagens encerrado.")
@@ -50,6 +80,8 @@ def send_commands():
 
         request = {}
         
+        # --- Lógica de Envio e Recebimento com MessagePack ---
+        
         match opcao:
             case "login":
                 if user_name:
@@ -58,8 +90,12 @@ def send_commands():
                 
                 usuario = input("Entre com o nome: ")
                 request = {"service": "login", "data": {"user": usuario, "timestamp": datetime.now().isoformat()}}
-                req_socket.send_json(request)
-                reply = req_socket.recv_json()
+                
+                # Envia MessagePack
+                req_socket.send(msgpack.packb(request, default=str))
+                # Recebe MessagePack
+                reply_packed = req_socket.recv()
+                reply = msgpack.unpackb(reply_packed, raw=False)
 
                 if reply["data"]["status"] == "sucesso":
                     user_name = usuario
@@ -72,15 +108,25 @@ def send_commands():
 
             case "listar":
                 request = {"service": "users", "data": {"timestamp": datetime.now().isoformat()}}
-                req_socket.send_json(request)
-                reply = req_socket.recv_json()
+                
+                # Envia MessagePack
+                req_socket.send(msgpack.packb(request, default=str))
+                # Recebe MessagePack
+                reply_packed = req_socket.recv()
+                reply = msgpack.unpackb(reply_packed, raw=False)
+                
                 print("Usuários cadastrados:", reply.get("data", {}).get("users", []))
 
             case "canal":
                 canal_nome = input("Nome do novo canal: ")
                 request = {"service": "channel", "data": {"channel": canal_nome, "timestamp": datetime.now().isoformat()}}
-                req_socket.send_json(request)
-                reply = req_socket.recv_json()
+                
+                # Envia MessagePack
+                req_socket.send(msgpack.packb(request, default=str))
+                # Recebe MessagePack
+                reply_packed = req_socket.recv()
+                reply = msgpack.unpackb(reply_packed, raw=False)
+                
                 if reply["data"]["status"] == "sucesso":
                     print(f"Canal '{canal_nome}' criado com sucesso!")
                 else:
@@ -88,14 +134,16 @@ def send_commands():
 
             case "canais":
                 request = {"service": "channels", "data": {"timestamp": datetime.now().isoformat()}}
-                req_socket.send_json(request)
-                reply = req_socket.recv_json()
+                
+                # Envia MessagePack
+                req_socket.send(msgpack.packb(request, default=str))
+                # Recebe MessagePack
+                reply_packed = req_socket.recv()
+                reply = msgpack.unpackb(reply_packed, raw=False)
+                
                 print("Canais disponíveis:", reply.get("data", {}).get("channels", []))
 
             case "subscribe":
-                # Esta funcionalidade é local no cliente. O servidor não precisa saber.
-                # A thread receiver irá se encarregar de se inscrever.
-                # Por simplicidade, vamos reiniciar o receiver para adicionar a nova inscrição.
                 print("ERRO: Funcionalidade de subscribe dinâmico não implementada nesta versão.")
                 print("Por enquanto, você só recebe mensagens privadas.")
 
@@ -114,8 +162,13 @@ def send_commands():
                         "timestamp": datetime.now().isoformat()
                     }
                 }
-                req_socket.send_json(request)
-                reply = req_socket.recv_json()
+                
+                # Envia MessagePack
+                req_socket.send(msgpack.packb(request, default=str))
+                # Recebe MessagePack
+                reply_packed = req_socket.recv()
+                reply = msgpack.unpackb(reply_packed, raw=False)
+                
                 if reply["data"]["status"] == "OK":
                     print("Mensagem publicada com sucesso!")
                 else:
@@ -136,8 +189,13 @@ def send_commands():
                         "timestamp": datetime.now().isoformat()
                     }
                 }
-                req_socket.send_json(request)
-                reply = req_socket.recv_json()
+                
+                # Envia MessagePack
+                req_socket.send(msgpack.packb(request, default=str))
+                # Recebe MessagePack
+                reply_packed = req_socket.recv()
+                reply = msgpack.unpackb(reply_packed, raw=False)
+                
                 if reply["data"]["status"] == "OK":
                     print("Mensagem enviada com sucesso!")
                 else:
