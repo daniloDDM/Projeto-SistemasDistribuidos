@@ -9,11 +9,11 @@ context = zmq.Context()
 
 # --- Socket 1: REQ/REP (Para comandos) ---
 rep_socket = context.socket(zmq.REP)
-rep_socket.connect("tcp://broker:5556")
+rep_socket.connect("tcp://broker:5558")
 
 # --- Socket 2: PUB (Para publicar mensagens) ---
 pub_socket = context.socket(zmq.PUB)
-pub_socket.connect("tcp://proxy:5556") 
+pub_socket.connect("tcp://proxy:5555") 
 
 
 # --- Funções de Persistência ---

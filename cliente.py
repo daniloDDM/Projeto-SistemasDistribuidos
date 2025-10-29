@@ -12,8 +12,7 @@ running = True # Flag para controlar a execução das threads
 # --- Thread para Receber Mensagens (SUB) ---
 def receive_messages():
     sub_socket = context.socket(zmq.SUB)
-    # ATENÇÃO: Verifique se este endereço 'pubsub_proxy:5558' está correto na sua configuração
-    sub_socket.connect("tcp://pubsub_proxy:5558")
+    sub_socket.connect("tcp://pubsub_proxy:5556")
     
     # ... Inscrição do tópico (deve ser em bytes ou string, dependendo do PUB) ...
     # Vamos manter a inscrição como string, já que o tópico é uma string:
@@ -66,7 +65,7 @@ def receive_messages():
 def send_commands():
     global user_name, running
     req_socket = context.socket(zmq.REQ)
-    req_socket.connect("tcp://broker:5555")
+    req_socket.connect("tcp://broker:5557")
 
     print("Bem-vindo ao sistema de canais!")
     print("Opções: login, listar, canal, canais, subscribe, publish, msg, sair")
