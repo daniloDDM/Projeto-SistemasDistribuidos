@@ -1,21 +1,23 @@
 services:
+  # Broker (REQ/REP) para comandos (login, etc.)
   broker:
     build:
       context: .
       dockerfile: Dockerfile_broker
     container_name: broker
     ports:
-      - "5555:5555"
-      - "5556:5556"
+      - "5557:5557" # Frontend (ROUTER) para clientes REQ
+      - "5558:5558" # Backend (DEALER) para servidores REP
 
-  pubsub_proxy:
+  # Proxy (PUB/SUB) para mensagens de chat
+  proxy:
     build:
       context: .
       dockerfile: Dockerfile_proxy
     container_name: proxy
     ports:
-      - "5557:5557"
-      - "5558:5558"
+      - "5555:5555" # Frontend (XSUB) para servidores PUB
+      - "5556:5556" # Backend (XPUB) para clientes SUB
 
   servidor:
     build:
@@ -24,10 +26,10 @@ services:
     container_name: servidor
     volumes:
       - ./servidor.py:/app/servidor.py
-      - ./data:/app/data # Volume para persistir os dados
+      - ./data:/app/data 
     depends_on:
       - broker
-      - pubsub_proxy # Servidor agora também depende do proxy pub/sub
+      - proxy # Deve depender dos nomes de serviço corretos
 
   cliente:
     build:
@@ -37,13 +39,13 @@ services:
     stdin_open: true
     tty: true
     depends_on:
-      - servidor # Depende do servidor para estar de pé
+      - servidor 
 
   cliente_automatico:
     build:
       context: .
-      dockerfile: Dockerfile_cliente_automatico # Criaremos este Dockerfile a seguir
-    deploy:
-      replicas: 2
+      dockerfile: Dockerfile_cliente_automatico 
     depends_on:
       - servidor
+    
+    # docker compose up --build --scale cliente_automatico=2

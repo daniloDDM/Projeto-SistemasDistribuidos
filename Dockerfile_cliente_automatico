@@ -3,7 +3,7 @@ FROM python:3.9-alpine
 
 WORKDIR /app
 
-RUN pip install pyzmq
+RUN pip install pyzmq msgpack
 
 COPY ./cliente_automatico.py .
 
