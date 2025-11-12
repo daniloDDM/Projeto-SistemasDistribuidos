@@ -6,13 +6,31 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync" // <-- IMPORTAR SYNC
 	"time"
 
 	zmq "github.com/pebbe/zmq4"
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-var userName string // Armazena o nome do usuário logado
+var userName string
+var logicalClock int64 = 0   // <-- ADICIONAR CLOCK
+var clockMutex sync.Mutex // <-- ADICIONAR MUTEX
+
+// Função helper para pegar o max de int64
+func max(a, b int64) int64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+// Struct para desserializar APENAS o clock de qualquer resposta
+type ClockReply struct {
+	Data struct {
+		Clock int64 `msgpack:"clock"`
+	} `msgpack:"data"`
+}
 
 // Struct para desserializar respostas de erro (para ser robusto)
 type ErrorReply struct {
@@ -38,17 +56,15 @@ func receiveMessages(context *zmq.Context, user string) {
 	}
 	defer subSocket.Close()
 
-	// Conecta ao proxy PUB/SUB (Note: 'proxy', não 'pubsub_proxy')
+	// Conecta ao proxy PUB/SUB
 	subSocket.Connect("tcp://proxy:5556")
-	
+
 	// Inscreve-se no tópico de usuário privado
 	subSocket.SetSubscribe("user:" + user)
-	// TODO: Adicionar lógica para se inscrever em canais (ex: "canal:geral")
 
 	fmt.Println("\n[INFO] Listener de mensagens (SUB) iniciado.")
 
 	for {
-		// Recebe a mensagem em multipartes
 		frames, err := subSocket.RecvMessageBytes(0)
 		if err != nil {
 			log.Printf("Erro no SUB socket: %v", err)
@@ -62,7 +78,6 @@ func receiveMessages(context *zmq.Context, user string) {
 		topic := string(frames[0])
 		payload := frames[1]
 
-		// Desserializa o payload MessagePack
 		var msgData map[string]interface{}
 		err = msgpack.Unmarshal(payload, &msgData)
 		if err != nil {
@@ -70,22 +85,38 @@ func receiveMessages(context *zmq.Context, user string) {
 			continue
 		}
 
+		// --- LÓGICA DO RELÓGIO (RECEBER) ---
+		var receivedClock int64
+		if clockVal, ok := msgData["clock"]; ok {
+			// msgpack pode decodificar números como float64 ou int64
+			if floatVal, ok := clockVal.(float64); ok {
+				receivedClock = int64(floatVal)
+			} else if intVal, ok := clockVal.(int64); ok {
+				receivedClock = intVal
+			} else if uintVal, ok := clockVal.(uint64); ok {
+				receivedClock = int64(uintVal)
+			}
+		}
+
+		clockMutex.Lock()
+		logicalClock = max(logicalClock, receivedClock)
+		currentClock := logicalClock // Pega o valor para logar
+		clockMutex.Unlock()
+		// --- FIM DA LÓGICA ---
+
 		var output string
 		if strings.HasPrefix(topic, "user:") {
-			// Mensagem privada
 			src, _ := msgData["src"].(string)
 			msg, _ := msgData["message"].(string)
 			output = fmt.Sprintf("[%s para VOCÊ] %s", src, msg)
 		} else {
-			// Mensagem de canal
 			channel := topic
 			user, _ := msgData["user"].(string)
 			msg, _ := msgData["message"].(string)
 			output = fmt.Sprintf("[%s] %s: %s", channel, user, msg)
 		}
 
-		// Imprime a mensagem e redesenha o prompt
-		fmt.Printf("\n[MENSAGEM RECEBIDA] %s\nEntre com a opção: ", output)
+		fmt.Printf("\n[MENSAGEM RECEBIDA (Clock: %d)] %s\nEntre com a opção: ", currentClock, output)
 	}
 }
 
@@ -101,24 +132,23 @@ func main() {
 	fmt.Println("Bem-vindo ao sistema de canais! (Cliente em Go)")
 	fmt.Println("Opções: login, listar, canal, canais, publish, msg, sair")
 
-	// Leitor de terminal
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		// Exibe o prompt
 		fmt.Print("Entre com a opção: ")
 		opcao, _ := reader.ReadString('\n')
 		opcao = strings.TrimSpace(opcao)
 
-		// Prepara a request (como um mapa genérico)
 		request := make(map[string]interface{})
 		data := make(map[string]interface{})
 		request["data"] = data
 
+		didSend := false
+
 		switch opcao {
 		case "sair":
 			fmt.Println("Encerrando...")
-			return // Encerra o programa
+			return
 
 		case "login":
 			if userName != "" {
@@ -132,29 +162,12 @@ func main() {
 			request["service"] = "login"
 			data["user"] = usuario
 			data["timestamp"] = time.Now().Format(time.RFC3339)
-			
-			// Envia e recebe
-			replyBytes := sendRecv(reqSocket, request)
-
-			// Tenta desserializar como erro primeiro
-			var errReply ErrorReply
-			if msgpack.Unmarshal(replyBytes, &errReply) == nil && errReply.Data.Status == "erro" {
-				fmt.Printf("ERRO: %s\n", errReply.Data.Description)
-			} else {
-				userName = usuario
-				fmt.Printf("Login do usuário '%s' realizado com sucesso!\n", userName)
-				// Inicia a goroutine para receber mensagens APÓS o login
-				go receiveMessages(context, userName)
-			}
+			didSend = true
 
 		case "listar":
 			request["service"] = "users"
 			data["timestamp"] = time.Now().Format(time.RFC3339)
-			replyBytes := sendRecv(reqSocket, request)
-			
-			var list ListReply
-			msgpack.Unmarshal(replyBytes, &list)
-			fmt.Println("Usuários cadastrados:", list.Data.Users)
+			didSend = true
 
 		case "canal":
 			fmt.Print("Nome do novo canal: ")
@@ -164,27 +177,16 @@ func main() {
 			request["service"] = "channel"
 			data["channel"] = canalNome
 			data["timestamp"] = time.Now().Format(time.RFC3339)
-			
-			replyBytes := sendRecv(reqSocket, request)
-			var errReply ErrorReply
-			if msgpack.Unmarshal(replyBytes, &errReply) == nil && errReply.Data.Status == "erro" {
-				fmt.Printf("ERRO: %s\n", errReply.Data.Description)
-			} else {
-				fmt.Printf("Canal '%s' criado com sucesso!\n", canalNome)
-			}
+			didSend = true
 
 		case "canais":
 			request["service"] = "channels"
 			data["timestamp"] = time.Now().Format(time.RFC3339)
-			replyBytes := sendRecv(reqSocket, request)
-			
-			var list ListReply
-			msgpack.Unmarshal(replyBytes, &list)
-			fmt.Println("Canais disponíveis:", list.Data.Channels)
+			didSend = true
 
 		case "subscribe":
 			fmt.Println("ERRO: Funcionalidade de subscribe dinâmico não implementada.")
-			fmt.Println("Por enquanto, você só recebe mensagens privadas.")
+			didSend = false
 
 		case "publish":
 			if userName == "" {
@@ -201,10 +203,7 @@ func main() {
 			data["channel"] = strings.TrimSpace(canal)
 			data["message"] = strings.TrimSpace(mensagem)
 			data["timestamp"] = time.Now().Format(time.RFC3339)
-			
-			replyBytes := sendRecv(reqSocket, request)
-			// O servidor responde com {"data": {"status": "OK", ...}} ou {"data": {"status": "erro", ...}}
-			fmt.Println("Resposta do servidor (publish):", string(replyBytes)) // Simplesmente imprime a resposta
+			didSend = true
 
 		case "msg":
 			if userName == "" {
@@ -221,35 +220,82 @@ func main() {
 			data["dst"] = strings.TrimSpace(dest)
 			data["message"] = strings.TrimSpace(mensagem)
 			data["timestamp"] = time.Now().Format(time.RFC3339)
-			
-			replyBytes := sendRecv(reqSocket, request)
-			// O servidor responde com {"data": {"status": "OK", ...}} ou {"data": {"status": "erro", ...}}
-			fmt.Println("Resposta do servidor (msg):", string(replyBytes)) // Simplesmente imprime a resposta
+			didSend = true
 
 		default:
 			fmt.Println("Opção não encontrada.")
+			didSend = false
 		}
-	}
-}
 
-// sendRecv é uma função helper para enviar um request e receber uma resposta
-func sendRecv(socket *zmq.Socket, request map[string]interface{}) []byte {
-	// Serializa com MessagePack
-	reqBytes, err := msgpack.Marshal(request)
-	if err != nil {
-		log.Printf("Erro ao serializar request: %v", err)
-		return nil
-	}
+		// --- LÓGICA DE ENVIO/RECEBIMENTO CENTRALIZADA ---
+		if didSend {
+			// --- LÓGICA DO RELÓGIO (ENVIAR) ---
+			clockMutex.Lock()
+			logicalClock++
+			data["clock"] = logicalClock
+			fmt.Printf("[INFO] Enviando (Clock: %d)\n", logicalClock)
+			clockMutex.Unlock()
+			// --- FIM DA LÓGICA ---
 
-	// Envia
-	socket.SendBytes(reqBytes, 0)
+			// Serializa e envia
+			reqBytes, err := msgpack.Marshal(request)
+			if err != nil {
+				log.Printf("Erro ao serializar request: %v", err)
+				continue
+			}
+			reqSocket.SendBytes(reqBytes, 0)
 
-	// Recebe
-	replyBytes, err := socket.RecvBytes(0)
-	if err != nil {
-		log.Printf("Erro ao receber resposta: %v", err)
-		return nil
-	}
-	
-	return replyBytes
+			// Recebe
+			replyBytes, err := reqSocket.RecvBytes(0) // <-- 'replyBytes' é definido aqui
+			if err != nil {
+				log.Printf("Erro ao receber resposta: %v", err)
+				continue
+			}
+
+			// --- LÓGICA DO RELÓGIO (RECEBER) ---
+			var clockReply ClockReply
+			msgpack.Unmarshal(replyBytes, &clockReply) // Ignora erro, se falhar clockReply.Data.Clock será 0
+
+			clockMutex.Lock()
+			logicalClock = max(logicalClock, clockReply.Data.Clock)
+			clockMutex.Unlock()
+			
+			switch request["service"] {
+			case "login":
+				var errReply ErrorReply
+				if msgpack.Unmarshal(replyBytes, &errReply) == nil && errReply.Data.Status == "erro" {
+					fmt.Printf("ERRO: %s\n", errReply.Data.Description)
+				} else {
+					userName = data["user"].(string)
+					fmt.Printf("Login do usuário '%s' realizado com sucesso!\n", userName)
+					go receiveMessages(context, userName) // Inicia o listener
+				}
+			case "listar":
+				var list ListReply
+				msgpack.Unmarshal(replyBytes, &list)
+				fmt.Println("Usuários cadastrados:", list.Data.Users)
+			case "canal":
+				var errReply ErrorReply
+				if msgpack.Unmarshal(replyBytes, &errReply) == nil && errReply.Data.Status == "erro" {
+					fmt.Printf("ERRO: %s\n", errReply.Data.Description)
+				} else {
+					fmt.Printf("Canal '%s' criado com sucesso!\n", data["channel"])
+				}
+			case "canais":
+				var list ListReply
+				msgpack.Unmarshal(replyBytes, &list)
+				fmt.Println("Canais disponíveis:", list.Data.Channels)
+			case "publish", "msg":
+				var statusReply ErrorReply // Reutilizando a struct
+				msgpack.Unmarshal(replyBytes, &statusReply)
+				if statusReply.Data.Status == "OK" {
+					fmt.Println("Mensagem enviada com sucesso.")
+				} else {
+					fmt.Printf("ERRO: %s\n", statusReply.Data.Description)
+				}
+			}
+		
+
+		} 
+	} 
 }

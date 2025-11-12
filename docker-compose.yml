@@ -9,6 +9,14 @@ services:
       - "5557:5557" # Frontend (ROUTER) para clientes REQ
       - "5558:5558" # Backend (DEALER) para servidores REP
 
+  referencia:
+    build:
+      context: .
+      dockerfile: Dockerfile_referencia
+    container_name: referencia
+    ports:
+      - "5560:5560"
+
   # Proxy (PUB/SUB) para mensagens de chat
   proxy:
     build:
@@ -23,13 +31,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_servidor
-    container_name: servidor
+  
+    deploy:
+      replicas: 3
     volumes:
       - ./servidor.py:/app/servidor.py
-      - ./data:/app/data 
+      - server_data:/app/data 
     depends_on:
       - broker
-      - proxy # Deve depender dos nomes de serviço corretos
+      - proxy
+      - referencia
 
   cliente:
     build:
@@ -49,3 +60,6 @@ services:
       - servidor
     
     # docker compose up --build --scale cliente_automatico=2
+
+volumes:
+  server_data:

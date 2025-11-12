@@ -1,0 +1,14 @@
+# Dockerfile_referencia
+FROM python:3.10-slim
+
+WORKDIR /app
+COPY referencia.py .
+
+# Instala as dependências
+RUN pip install zmq msgpack
+
+# Expõe a nova porta
+EXPOSE 5560
+
+# Roda o serviço
+CMD ["python", "-u", "referencia.py"]

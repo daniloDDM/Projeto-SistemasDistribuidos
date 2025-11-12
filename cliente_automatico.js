@@ -3,6 +3,8 @@
 const zmq = require("zeromq");
 const msgpack = require("@msgpack/msgpack");
 
+let logicalClock = 0;
+
 // --- Configuração ---
 // No Node.js, sockets são assíncronos
 const socket = new zmq.Request();
@@ -37,24 +39,25 @@ const MENSAGENS = [
 async function main() {
   // 1. Login com usuário aleatório
   const userName = `bot_js_${randomString(5)}`;
+  logicalClock++;
   const loginReq = {
     "service": "login",
-    "data": {"user": userName, "timestamp": new Date().toISOString()} // ISO format é o mesmo
+    "data": {
+      "user": userName, 
+      "timestamp": new Date().toISOString(),
+      "clock": logicalClock
+    } // ISO format é o mesmo
   };
 
   try {
-    console.log(`Bot '${userName}' tentando logar...`);
+    console.log(`Bot '${userName}' tentando logar...(Clock: ${logicalClock})`);
     
-    // --- CORREÇÃO: Usar msgpack ---
-    // Envia msgpack (equiv. a msgpack.packb)
     await socket.send(msgpack.encode(loginReq));
-    
-    // Recebe msgpack (equiv. a socket.recv)
-    // O .receive() do JS retorna um array de frames
     const [replyPacked] = await socket.receive(); 
-    
-    // (equiv. a msgpack.unpackb)
     const reply = msgpack.decode(replyPacked); 
+
+    const receivedClock = reply.data?.clock || 0;
+    logicalClock = Math.max(logicalClock, receivedClock);
 
     if (reply.data.status !== "sucesso") {
       console.error(`Bot ${userName} falhou ao logar. Encerrando.`);
@@ -71,10 +74,19 @@ async function main() {
   while (true) {
     try {
       // Pega a lista de canais
-      const channelsReq = {"service": "channels", "data": {"timestamp": new Date().toISOString()}};
+      logicalClock++;
+      const channelsReq = {
+        "service": "channels", 
+        "data": {
+          "timestamp": new Date().toISOString(),
+          "clock": logicalClock
+        }
+      };
       await socket.send(msgpack.encode(channelsReq));
       const [channelsReplyPacked] = await socket.receive();
       const channelsReply = msgpack.decode(channelsReplyPacked);
+      const channelsClock = channelsReply.data?.clock || 0;
+      logicalClock = Math.max(logicalClock, channelsClock);
       
       // 'data' pode não existir, 'channels' pode não existir.
       let availableChannels = channelsReply.data?.channels || []; 
@@ -83,10 +95,24 @@ async function main() {
         // Se não houver canais, cria um
         const newChannel = `canal_js_${randomString(4)}`;
         console.log(`Bot '${userName}' criando canal '${newChannel}'...`);
-        const createChannelReq = {"service": "channel", "data": {"channel": newChannel, "timestamp": new Date().toISOString()}};
+        logicalClock++;
+        const createChannelReq = {
+          "service": "channel", 
+          "data": {
+            "channel": newChannel, 
+            "timestamp": new Date().toISOString(),
+            "clock": logicalClock
+          }
+        };
         
         await socket.send(msgpack.encode(createChannelReq));
-        await socket.receive(); // Apenas consome a resposta
+
+        const [createReplyPacked] = await socket.receive();
+        const createReply = msgpack.decode(createReplyPacked);
+
+        // Regra 2
+        const createClock = createReply.data?.clock || 0;
+        logicalClock = Math.max(logicalClock, createClock);
         availableChannels.push(newChannel);
       }
 
@@ -97,18 +123,24 @@ async function main() {
       console.log(`Bot '${userName}' vai enviar 10 mensagens para o canal '${targetChannel}'.`);
       for (let i = 0; i < 10; i++) {
         const messageToSend = MENSAGENS[Math.floor(Math.random() * MENSAGENS.length)];
+        logicalClock++;
         const publishReq = {
           "service": "publish",
           "data": {
             "user": userName,
             "channel": targetChannel,
             "message": `(JS ${i+1}/10) ${messageToSend}`,
-            "timestamp": new Date().toISOString()
+            "timestamp": new Date().toISOString(),
+            "clock": logicalClock
           }
         };
 
         await socket.send(msgpack.encode(publishReq));
-        await socket.receive(); // Consome a resposta
+        const [pubReplyPacked] = await socket.receive();
+        const pubReply = msgpack.decode(pubReplyPacked);
+
+        const pubClock = pubReply.data?.clock || 0;
+        logicalClock = Math.max(logicalClock, pubClock);
         
         // Espera entre 0.5s e 2.0s
         const waitTime = Math.random() * (2000 - 500) + 500; 
