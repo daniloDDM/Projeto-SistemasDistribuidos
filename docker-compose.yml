@@ -44,7 +44,7 @@ services:
   cliente_automatico:
     build:
       context: .
-      dockerfile: Dockerfile_cliente_automatico 
+      dockerfile: Dockerfile_cliente_automatico
     depends_on:
       - servidor
     

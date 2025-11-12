@@ -1,10 +1,18 @@
-# Dockerfile_cliente_automatico
-FROM python:3.9-alpine
+# Dockerfile_cliente_automatico_js
 
+# Use uma imagem oficial do Node.js
+FROM node:18-alpine
+
+# Define o diretório de trabalho
 WORKDIR /app
 
-RUN pip install pyzmq msgpack
+# Instala as dependências (zeromq e msgpack)
+# Não precisamos de um package.json para este exemplo simples
+RUN npm install zeromq @msgpack/msgpack
 
-COPY ./cliente_automatico.py .
+# Copie o código-fonte do cliente
+COPY cliente_automatico.js .
 
-CMD ["python", "cliente_automatico.py"]
+# Comando para rodar o script
+# (O 'node' não precisa do -u igual ao python)
+CMD ["node", "cliente_automatico.js"]

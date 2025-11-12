@@ -1,9 +1,40 @@
-FROM python:3.13.7-alpine3.21
+# Estágio 1: Compilação (Builder)
+FROM golang:1.21-alpine AS builder
+
+# Instala as dependências C necessárias (libzmq e build tools)
+RUN apk add --no-cache build-base zeromq-dev
 
 WORKDIR /app
 
-RUN pip install pyzmq msgpack
+# Copia os arquivos de gerenciamento de dependências
+COPY go.mod .
+# (O go.sum será criado/atualizado pelo tidy)
 
-COPY ./cliente.py .
+# Copia o código-fonte (NECESSÁRIO para o tidy saber o que baixar)
+COPY cliente.go .
 
-CMD ["python", "cliente.py"]
+# --- CORREÇÃO AQUI ---
+# 'go mod tidy' lê o go.mod E o código-fonte (*.go),
+# baixa as dependências e cria/atualiza o go.sum.
+RUN go mod tidy
+
+# Compila o binário
+# Esta etapa agora funcionará porque o go.sum está correto.
+RUN go build -o /cliente-go-bin .
+
+# -------------------------------------------------
+
+# Estágio 2: Imagem Final (Leve)
+FROM alpine:latest
+
+# Instala APENAS a biblioteca C (runtime)
+RUN apk add --no-cache libzmq
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia APENAS o binário compilado do estágio 'builder'
+COPY --from=builder /cliente-go-bin .
+
+# Configura o cliente para ser interativo
+ENTRYPOINT ["/app/cliente-go-bin"]
