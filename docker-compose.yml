@@ -42,6 +42,14 @@ services:
       - proxy
       - referencia
 
+    ports:
+      - target: 5570 
+        published: 5570-5572
+        protocol: tcp
+        mode: ingress
+    environment:
+      - SERVER_NAME=app-servidor-{{.Task.Slot}}
+
   cliente:
     build:
       context: .
